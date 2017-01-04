@@ -1,6 +1,5 @@
 import httplib, urllib, base64, random, string, json, pprint, cStringIO
 from PIL import Image
-#import urllib2 as urllib
 import io 
 
 def get_random_image(): 

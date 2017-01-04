@@ -5,7 +5,6 @@ import io
 
 def get_random_image(): 
     search_term = "".join(random.choice(string.ascii_lowercase) for j in range(random.randint(1,6)))
-    print search_term
 
     headers = {
         'Ocp-Apim-Subscription-Key': '9eca18ad3a9f4d16990d07cf0b86221b',
@@ -23,7 +22,6 @@ def get_random_image():
         image_json = json.loads(data)
         match_number = random.randint(0, len(image_json['value'])-1)
         url = image_json['value'][match_number]['contentUrl']
-        print url
         img_file = io.BytesIO(urllib.urlopen(url).read())
         img = Image.open(img_file)
         img.show()

@@ -1,9 +1,14 @@
-import httplib, urllib, base64, random, string, json, pprint, cStringIO
+import base64
+import cStringIO
+import PIL
+import random 
+import requests
+import string 
+import urllib 
 from PIL import Image
-import io 
 
 def get_random_image(): 
-    search_term = "".join(random.choice(string.ascii_lowercase) for j in range(random.randint(1,6)))
+    search_term = "".join(random.choice(string.ascii_lowercase) for character in xrange(random.randint(1,6)))
 
     headers = {
         'Ocp-Apim-Subscription-Key': '9eca18ad3a9f4d16990d07cf0b86221b',
@@ -13,18 +18,15 @@ def get_random_image():
         'q': search_term
     })
     try:
-        conn = httplib.HTTPSConnection('api.cognitive.microsoft.com')
-        conn.request("POST", "/bing/v5.0/images/search?%s" % params, "{body}", headers)
-        response = conn.getresponse()
-        data = response.read()
-        conn.close()
-        image_json = json.loads(data)
+        response = requests.post('https://api.cognitive.microsoft.com/bing/v5.0/images/search', params=params, headers=headers)
+        response.raise_for_status()
+        image_json = response.json()
         match_number = random.randint(0, len(image_json['value'])-1)
         url = image_json['value'][match_number]['contentUrl']
-        img_file = io.BytesIO(urllib.urlopen(url).read())
+        img_file = cStringIO.StringIO(urllib.urlopen(url).read())
         img = Image.open(img_file)
         img.show()
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print e
 
 def main():
